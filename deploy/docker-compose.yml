@@ -1,0 +1,25 @@
+# VPS deploy: dinghy + Caddy for automatic HTTPS.
+# DINGHY_DOMAIN must point at this server. Put your settings in ./.env next to this file.
+services:
+  dinghy:
+    image: ghcr.io/magndotcc/dinghy:latest
+    build: ..
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DINGHY_PUBLIC_URL: https://${DINGHY_DOMAIN}
+    volumes:
+      - dinghy-data:/data
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports: ["80:80", "443:443"]
+    command: caddy reverse-proxy --from ${DINGHY_DOMAIN} --to dinghy:8080
+    volumes:
+      - caddy-data:/data
+    depends_on: [dinghy]
+
+volumes:
+  dinghy-data:
+  caddy-data:

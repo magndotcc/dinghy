@@ -1,0 +1,19 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "dinghy",
+  "main": "src/worker/index.ts",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true },
+  // Reconcile loop: reap finished VMs, provision backlog, advance snapshot bakes.
+  "triggers": { "crons": ["* * * * *"] },
+  "d1_databases": [{ "binding": "DB", "database_name": "dinghy" }],
+  "vars": {
+    "DINGHY_LABEL": "dinghy",
+    "DINGHY_DEFAULT_SIZE": "small",
+    "DINGHY_MAX_CONCURRENT": "20",
+    "DINGHY_RUNNER_SCOPE": "repo",
+    "DINGHY_MARKUP_PERCENT": "0"
+  }
+  // Secrets: wrangler secret put BOAT_API_KEY / GITHUB_WEBHOOK_SECRET / GITHUB_TOKEN / DINGHY_ADMIN_PASSWORD
+}
